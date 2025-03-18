@@ -13,7 +13,7 @@ def index():
 @socketio.on('message')
 def handle_message(message):
     print('Mesaj primit:', message)
-    emit('response', f"Salut! Ai trimis: {message}")
+    emit('response', f"Salut x! Ai trimis: {message}")
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
