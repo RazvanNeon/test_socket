@@ -1,16 +1,18 @@
+import os
 import asyncio
 import websockets
 
-async def handle_connection(websocket, path):
+async def handler(websocket, path):
     async for message in websocket:
         print("Mesaj primit:", message)
         response = f"Salut! Ai trimis: {message}"
         await websocket.send(response)
 
 async def main():
-    # Serverul ascultă pe adresa și portul specificate
-    async with websockets.serve(handle_connection, "0.0.0.0", 5000):
-        await asyncio.Future()  # rulează la nesfârșit
+    port = int(os.getenv('PORT', 5000))  # folosește portul alocat de Render
+    async with websockets.serve(handler, "0.0.0.0", port):
+        print(f"Serverul pornește pe portul {port}")
+        await asyncio.Future()  # serverul rulează la nesfârșit
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())
