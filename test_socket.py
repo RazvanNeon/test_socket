@@ -1,20 +1,16 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
-import os
+import asyncio
+import websockets
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+async def handle_connection(websocket, path):
+    async for message in websocket:
+        print("Mesaj primit:", message)
+        response = f"Salut! Ai trimis: {message}"
+        await websocket.send(response)
 
-@app.route('/')
-def index():
-    return "Serverul Flask cu WebSocket este în funcțiune!"
-
-@socketio.on('message')
-def handle_message(message):
-    print('Mesaj primit:', message)
-    emit('response', f"Salut x! Ai trimis: {message}")
+async def main():
+    # Serverul ascultă pe adresa și portul specificate
+    async with websockets.serve(handle_connection, "0.0.0.0", 5000):
+        await asyncio.Future()  # rulează la nesfârșit
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port)
+    asyncio.run(main())
